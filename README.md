@@ -1,5 +1,5 @@
 ## About the project
-###Major Components
+### Major Components
 1. Dockerfile
 2. requirement.txt
 3. Model File
@@ -69,13 +69,11 @@ Dependencies for Sci-Kit Learn
     numpy==1.19.0
     scikit-learn==0.23.1
     scipy==1.5.1
-    threadpoolctl==2.1.0
 ```
 
 Dependencies for TensorFlow
 ```
     requests-oauthlib==1.3.0
-    rsa==4.6
     scipy==1.4.1
     six==1.15.0
     tensorboard==2.2.2
