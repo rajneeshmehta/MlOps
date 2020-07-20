@@ -181,3 +181,7 @@ Tune the Hypeparameter if Needed.
 ### Step: 4
 Restart The Job if job fails due to any reason
 <img src="Gifs/Restart-Job.gif">
+
+### Build-Pieline View
+
+<img src="Gifs/Build-Pipeline-View.jpg">
