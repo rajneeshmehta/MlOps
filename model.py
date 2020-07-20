@@ -99,7 +99,7 @@ earlyStopping = EarlyStopping(
     restore_best_weights=True)
 
 callbacks_list = [checkpoint, earlyStopping]
-model.fit(x=X_train,
+history = model.fit(x=X_train,
           y=Y_train,
           batch_size=batch_size,
           epochs=epochs,
@@ -107,3 +107,5 @@ model.fit(x=X_train,
           shuffle=True,
           callbacks=callbacks_list,
           use_multiprocessing=True)
+val_acc = history.history['val_accuracy'][-1]
+system('export VAL_ACC = val_acc')
