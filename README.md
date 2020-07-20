@@ -159,3 +159,25 @@ system('export VAL_ACC = val_acc')
 > Link to Full `model.py` find [here](model.py "Model")
 
 #### 4. Jenkins Jobs for automation.
+
+### Step: 1
+Get the code for ML training.
+<img src="Gifs/Get-The-ML-Code.gif">
+
+Start this job by providing parameters
+
+<img src="Gifs/Run-The-Job.gif">
+
+### Step: 2 
+Start the training inside the docker container.
+
+<img src="Gifs/Start-The-Training.gif">
+
+### Step: 3
+Tune the Hypeparameter if Needed.
+
+<img src="Gifs/Tune-The-Parameter.gif">
+
+### Step: 4
+Restart The Job if job fails due to any reason
+<img src="Gifs/Restart-Job.gif">
