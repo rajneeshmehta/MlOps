@@ -22,11 +22,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 #### 2. requirements.txt
 It has all liabraies listed for all environments (Keras, Sci-Kit Learn, Tensorflow)
 
-Dependencies for Keras can be found  [here]( Requirements\Keras\requirements.txt "Keras")
+Dependencies for Keras can be found  [here]( Requirements/Keras/requirements.txt "Keras")
 
-Dependencies for TensorFlow can be found  [here]( Requirements\TensorFlow\requirements.txt "TensorFlow")
+Dependencies for TensorFlow can be found  [here]( Requirements/TensorFlow/requirements.txt "TensorFlow")
 
-Dependencies for Sci-Kit Learn can be found  [here]( Requirements\SkLearn\requirements.txt "Sci-Kit Learn")
+Dependencies for Sci-Kit Learn can be found  [here]( Requirements/SkLearn/requirements.txt "Sci-Kit Learn")
 
 #### 2. Model File
 Model file has these major components.
@@ -161,3 +161,5 @@ system('export VAL_ACC = val_acc')
 > [here](model.py "Model")
 
 #### 4. Jenkins Jobs for automation.
+https://github.com/rajneeshmehta/MlOps/blob/master/Requirements/Keras/requirements.txt
+https://github.com/rajneeshmehta/MlOps/blob/master/Requirements%5CKeras%5Crequirements.txt
