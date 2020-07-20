@@ -19,70 +19,145 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 ```
 
-#### 1. requirements.txt
+#### 2. requirements.txt
 It has all liabraies listed for all environments (Keras, Sci-Kit Learn, Tensorflow)
 
-Dependencies for Keras
+Dependencies for Keras can be found  [here]( Requirements\Keras\requirements.txt "Keras")
+
+Dependencies for TensorFlow can be found  [here]( Requirements\TensorFlow\requirements.txt "TensorFlow")
+
+Dependencies for Sci-Kit Learn can be found  [here]( Requirements\SkLearn\requirements.txt "Sci-Kit Learn")
+
+#### 2. Model File
+Model file has these major components.
+
+##### Liabraries
+```python
+from keras.datasets.mnist import load_data
+from keras.models import Sequential
+from keras.layers import Dense, Conv2D, Flatten, ReLU, Dropout
+from keras.layers import BatchNormalization, MaxPooling2D
+from keras.utils import to_categorical
+from keras.callbacks import Callback, ModelCheckpoint
+import numpy as np
+from os import getenv, system
 ```
-    absl-py==0.9.0
-    astunparse==1.6.3
-    cachetools==4.1.1
-    certifi==2020.6.20
-    chardet==3.0.4
-    gast==0.3.3
-    google-auth==1.18.0
-    google-auth-oauthlib==0.4.1
-    google-pasta==0.2.0
-    grpcio==1.30.0
-    h5py==2.10.0
-    idna==2.10
-    importlib-metadata==1.7.0
-    Keras==2.4.3
-    Keras-Preprocessing==1.1.2
-    Markdown==3.2.2
-    numpy==1.19.0
-    oauthlib==3.1.0
-    opt-einsum==3.2.1
-    protobuf==3.12.2
-    pyasn1==0.4.8
-    pyasn1-modules==0.2.8
-    PyYAML==5.3.1
-    requests==2.24.0
-    requests-oauthlib==1.3.0
-    rsa==4.6
-    scipy==1.4.1
-    six==1.15.0
-    tensorboard==2.2.2
-    tensorboard-plugin-wit==1.7.0
-    tensorflow==2.2.0
-    tensorflow-estimator==2.2.0
-    termcolor==1.1.0
-    urllib3==1.25.9
-    Werkzeug==1.0.1
-    wrapt==1.12.1
-    zipp==3.1.0
+##### Helper Functions
+function to load dataset (by default is load keras mnist digit dataset)
+```python
+def load_dataset():
+    (X_train, Y_train), (X_test, Y_test) = load_data(path='mnist.npz')
+    X_train = X_train.reshape(X_train.shape[0], 28, 28, 1)
+    X_test = X_test.reshape(X_test.shape[0], 28, 28, 1)
+    Y_train = to_categorical(Y_train)
+    Y_test = to_categorical(Y_test)
+    return X_train, X_test, Y_train, Y_test
+```
+function to preprocess dataset.
+```python
+def Prep_dataset(X_train, X_test):
+    X_train = X_train.astype('float32')
+    X_test = X_test.astype('float32')
+
+    X_train = X_train/255.0
+    X_test = X_test/255.0
+    return X_train, X_test
 
 ```
-Dependencies for Sci-Kit Learn
+
+function to initialize Model.
+```python
+def model_init():
+    model = Sequential()
+    model.add(Conv2D(filters=512,
+                     kernel_size=(3, 3),
+                     strides=(1, 1),
+                     padding="same",
+                     activation='relu',
+                     input_shape=(28, 28, 1)
+                     ))
+    return model
 ```
-    joblib==0.16.0
-    numpy==1.19.0
-    scikit-learn==0.23.1
-    scipy==1.5.1
+function to add one conv block. One block contains
+Conv2D -> BatchNormalization -> MaxPooling2D -> Dropout -> ReLU
+```python
+def add_block(model):
+    model.add(Conv2D(filters=256,
+                     kernel_size=(3, 3),
+                     strides=(1, 1),
+                     padding="valid",
+                     activation='relu'
+                     ))
+    model.add(BatchNormalization())
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.2))
+    model.add(ReLU())
+    return model
+```
+function to finalise the model  flatten it then 2 dense layer with dropout and last sofmax function.
+```python
+def finalise(model):
+    model.add(Flatten())
+    model.add(Dense(units=64, activation="relu"))
+    model.add(Dropout(0.5))
+    model.add(Dense(10, activation='softmax'))
+    return model
 ```
 
-Dependencies for TensorFlow
+##### Environmental variables
+```python
+no_blocks    = getenv('NO_BLOCKS')
+batch_size   = getenv('BATCH_SIZE')
+epochs       = getenv('EPOCHS')
+filepath     = getenv('FILEPATH')
 ```
-    requests-oauthlib==1.3.0
-    scipy==1.4.1
-    six==1.15.0
-    tensorboard==2.2.2
-    tensorboard-plugin-wit==1.7.0
-    tensorflow==2.2.0
-    tensorflow-estimator==2.2.0
-    termcolor==1.1.0
-    urllib3==1.25.9
-    Werkzeug==1.0.1
-    wrapt==1.12.1
-    zipp==3.1.0
+##### Model creation with helper function.
+```python
+model = model_init()
+
+for i in range(1, no_blocks+1):
+    model = add_block(model)
+
+model = finalise(model)
+
+model.compile(optimizer='Adam', loss='categorical_crossentropy',
+              metrics=['accuracy'])
+print(model.summary())
+
 ```
+##### Callbacks and Fitting the model
+```python
+X_train, X_test, Y_train, Y_test = load_dataset()
+X_train, X_test = Prep_dataset(X_train, X_test)
+
+
+checkpoint = ModelCheckpoint(
+    filepath, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max')
+
+earlyStopping = EarlyStopping(
+    monitor='val_accuracy',
+    min_delta=0.01,
+    patience=0,
+    verbose=0,
+    mode='auto',
+    baseline=None,
+    restore_best_weights=True)
+
+callbacks_list = [checkpoint, earlyStopping]
+history = model.fit(x=X_train,
+          y=Y_train,
+          batch_size=batch_size,
+          epochs=epochs,
+          validation_data=(X_test, Y_test),
+          shuffle=True,
+          callbacks=callbacks_list,
+          use_multiprocessing=True)
+val_acc = history.history['val_accuracy'][-1]
+system('export VAL_ACC = val_acc')
+```
+
+> Link to Full `model.py` find 
+> 
+> [here](model.py "Model")
+
+#### 4. Jenkins Jobs for automation.
