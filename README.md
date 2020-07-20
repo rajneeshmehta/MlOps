@@ -156,10 +156,6 @@ val_acc = history.history['val_accuracy'][-1]
 system('export VAL_ACC = val_acc')
 ```
 
-> Link to Full `model.py` find 
-> 
-> [here](model.py "Model")
+> Link to Full `model.py` find [here](model.py "Model")
 
 #### 4. Jenkins Jobs for automation.
-https://github.com/rajneeshmehta/MlOps/blob/master/Requirements/Keras/requirements.txt
-https://github.com/rajneeshmehta/MlOps/blob/master/Requirements%5CKeras%5Crequirements.txt
